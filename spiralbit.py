@@ -1,12 +1,9 @@
 import signal
 import sys
-import json
-import urllib
-import urllib2
 import time
 import threading
 import ConfigParser
-import hmac
+import bitstamp
 
 threads = []
 
@@ -28,16 +25,18 @@ class trader (threading.Thread):
         self.running = False
 
 class monitor (threading.Thread):
-    def __init__(self, threadID, name):
+    def __init__(self, threadID, name, pollInterval, api):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.name = name
         self.running = False
+        self.pollInterval = pollInterval
+        self.api = api
     def run(self):
         self.running = True
         print "Starting " + self.name
         while self.running == True:
-            pullPrice()
+            api.pullPrice()
             time.sleep(10)
         print "Exiting " + self.name
     def stop(self):
@@ -59,29 +58,7 @@ def ConfigSectionMap(section):
 def doTrading():
     print "Trading..."
 
-def pullPrice():
-    print "Pulling price..."
-    url = "https://www.bitstamp.net/api/ticker"
-    #data = urllib.urlencode(parameters)
-    req = urllib2.Request(url)
-    response = urllib2.urlopen(req)
-    price = json.load(response)
 
-def sign(signingnonce):
-    message = signingnonce + client_id + api_key
-    signature = hmac.new(API_SECRET, msg=message, digestmod=hashlib.sha256).hexdigest().upper()
-    return signature
-
-def getBalance():
-    balanceUrl = "https://www.bitstamp.net/api/balance"
-    parameters = {"key": api_key,
-    "signature": sign(nonce),
-    "nonce": nonce}
-    data = urllib.urlencode(parameters)
-    req = urllib2.Request(balanceUrl, data)
-    response = urllib2.urlopen(req)
-    balance = response.read()
-    return balance
 
 def signalHandler(signal, frame):
     print 'Closing...'
@@ -94,18 +71,19 @@ def signalHandler(signal, frame):
     print "Bye"
     sys.exit(0)
 
-nonce = 1
 Config = ConfigParser.ConfigParser()
 Config.read("config.ini")
 
 cid = ConfigSectionMap("Authentication")['cid']
 api_key = ConfigSectionMap("Authentication")['key']
 API_SECRET = ConfigSectionMap("Authentication")['secret']
+apiUrl = "https://www.bitstamp.net/api/"
 
 threadLock = threading.Lock()
+api = bitstamp.Bitstamp(apiUrl, cid, api_key, API_SECRET)
 
 # Create new threads
-monitor1 = monitor(1, "Monitor-1")
+monitor1 = monitor(1, "Monitor-1", 10, api)
 trader1 = trader(2, "Trader-1")
 trader2 = trader(3, "Trader-2")
 
