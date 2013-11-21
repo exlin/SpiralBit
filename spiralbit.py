@@ -1,6 +1,7 @@
 import json
 import urllib
 import urllib2
+import time
 
 def pullPrice():
     url = "https://www.bitstamp.net/api/ticker"
@@ -13,4 +14,6 @@ def pullPrice():
 
     print json_object
 
-pullPrice()
+while True:
+    pullPrice()
+    time.sleep(10)
