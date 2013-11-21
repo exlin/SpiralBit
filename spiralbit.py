@@ -4,6 +4,7 @@ import urllib2
 import time
 import threading
 import ConfigParser
+import hmac
 
 class trader (threading.Thread):
     def __init__(self, threadID, name):
