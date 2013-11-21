@@ -51,6 +51,7 @@ def pullPrice():
 def sign(signingnonce):
     message = signingnonce + client_id + api_key
     signature = hmac.new(API_SECRET, msg=message, digestmod=hashlib.sha256).hexdigest().upper()
+    return signature
 
 def getBalance():
     balanceUrl = "https://www.bitstamp.net/api/balance"
