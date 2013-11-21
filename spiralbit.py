@@ -61,7 +61,8 @@ def getBalance():
     data = urllib.urlencode(parameters)
     req = urllib2.Request(balanceUrl, data)
     response = urllib2.urlopen(req)
-    json_object = response.read()
+    balance = response.read()
+    return balance
 
 nonce = 1
 Config = ConfigParser.ConfigParser()
