@@ -25,7 +25,7 @@ class Bitstamp():
 
     def getBalance(self, nonce):
         balanceUrl = self.baseUrl + "balance"
-        parameters = {"key": api_key,
+        parameters = {"key": self.api_key,
         "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
@@ -36,7 +36,7 @@ class Bitstamp():
 
     def getTransactions(self, nonce, limit=100, offset=0, sort="desc"):
         transactionsUrl = self.baseUrl + "user_transactions"
-        parameters = {"key": api_key,
+        parameters = {"key": self.api_key,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "offset": offset,
@@ -50,7 +50,7 @@ class Bitstamp():
 
     def getOpenOrders(self, nonce):
         openordersUrl = self.baseUrl + "open_orders"
-        parameters = {"key": api_key,
+        parameters = {"key": self.api_key,
         "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
@@ -61,7 +61,7 @@ class Bitstamp():
 
     def cancelOrder(self, nonce, orderid):
         cancelUrl = self.baseUrl + "cancel_order"
-        parameters = {"key": api_key,
+        parameters = {"key": self.api_key,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "id": orderid}
@@ -73,7 +73,7 @@ class Bitstamp():
 
     def buyBitcoins(self, nonce, amount, price):
         buyUrl = self.baseUrl + "buy"
-        parameters = {"key": api_key,
+        parameters = {"key": self.api_key,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "amount": amount,
@@ -86,7 +86,7 @@ class Bitstamp():
 
     def sellBitcoins(self, nonce, amount, price):
         sellUrl = self.baseUrl + "sell"
-        parameters = {"key": api_key,
+        parameters = {"key": self.api_key,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "amount": amount,
