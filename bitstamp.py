@@ -35,3 +35,20 @@ class Bitstamp():
         balance = response.read()
         nonce = nonce + 1
         return balance
+
+    def getTransactions(self, limit=100, offset=0, sort="desc"):
+        transactionsUrl = self.balanceUrl + "user_transactions"
+        parameters = {"key": api_key,
+        "signature": self.sign(),
+        "nonce": nonce,
+        "offset": offset,
+        "limit": limit,
+        "sort": sort}
+        data = urllib.urlencode(parameters)
+        req = url.Request(transactionsUrl, data)
+        response = urllib2.urlopen(req)
+        transactions = response.read()
+        nonce = nonce + 1
+        return transactions
+
+
