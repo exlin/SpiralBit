@@ -39,18 +39,24 @@ class trader (threading.Thread):
                 
                 if self.mode == "buying":
                     if self.actedPrice == 0:
-                        # Thread have not yet done single trade, buying first ins.
-                        #exchange.buyBitcoins(self.app.getNonce(), 0.1, askPrice)
-                        #self.actedPrice = askPrice
-                        #self.mode = "selling"
-                        print "Bought first coins"
+                        if exchange.balanceCheckUSD(self.app.getNonce(), 0.1, askPrice):
+                            # Thread have not yet done single trade, buying first ins.
+                            #exchange.buyBitcoins(self.app.getNonce(), 0.1, askPrice)
+                            #self.actedPrice = askPrice
+                            #self.mode = "selling"
+                            print "Bought first coins"
+                        else:
+                            print "Out of dollars"
                     else:
                         react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
                         if react.action == "buy":
-                            exchange.buyBitcoins(self.app.getNonce(), 0.1, react.price)
-                            self.actedPrice = react.price
-                            self.mode = "selling"
-                            print "Buyed bitcoins"
+                            if exchange.balanceCheckUSD(self.app.getNonce(), 0.1, askPrice):
+                                exchange.buyBitcoins(self.app.getNonce(), 0.1, react.price)
+                                self.actedPrice = react.price
+                                self.mode = "selling"
+                                print "Buyed bitcoins"
+                            else:
+                                print "Out of dollars"
                         else:
                             print "Decided to wait"
                 

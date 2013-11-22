@@ -2,6 +2,7 @@ import urllib
 import urllib2
 import hmac
 import json
+import hashlib
 
 class Bitstamp():
     def __init__(self, baseUrl, cid, apiKey, apiSecret):
@@ -19,24 +20,23 @@ class Bitstamp():
         return json.load(response)
 
     def sign(self, nonce):
-        message = nonce + self.cid + self.apiKey
+        message = str(nonce) + self.cid + self.apiKey
         signature = hmac.new(self.apiSecret, msg=message, digestmod=hashlib.sha256).hexdigest().upper()
         return signature
 
     def getBalance(self, nonce):
         balanceUrl = self.baseUrl + "balance"
-        parameters = {"key": self.api_key,
+        parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
         response = urllib2.urlopen(req)
-        balance = response.read()
-        return balance
+        return json.load(response)
 
     def getTransactions(self, nonce, limit=100, offset=0, sort="desc"):
         transactionsUrl = self.baseUrl + "user_transactions"
-        parameters = {"key": self.api_key,
+        parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "offset": offset,
@@ -50,7 +50,7 @@ class Bitstamp():
 
     def getOpenOrders(self, nonce):
         openordersUrl = self.baseUrl + "open_orders"
-        parameters = {"key": self.api_key,
+        parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
@@ -61,7 +61,7 @@ class Bitstamp():
 
     def cancelOrder(self, nonce, orderid):
         cancelUrl = self.baseUrl + "cancel_order"
-        parameters = {"key": self.api_key,
+        parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "id": orderid}
@@ -73,7 +73,7 @@ class Bitstamp():
 
     def buyBitcoins(self, nonce, amount, price):
         buyUrl = self.baseUrl + "buy"
-        parameters = {"key": self.api_key,
+        parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "amount": amount,
@@ -86,7 +86,7 @@ class Bitstamp():
 
     def sellBitcoins(self, nonce, amount, price):
         sellUrl = self.baseUrl + "sell"
-        parameters = {"key": self.api_key,
+        parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce,
         "amount": amount,
@@ -96,5 +96,14 @@ class Bitstamp():
         response = urllib2.urlopen(req)
         sell = response.read()
         return sell
+
+    def balanceCheckUSD(self, nonce, amount, price):
+        balance = self.getBalance(nonce)['usd_available']
+        check = False
+        if balance > amount * price:
+            check = True
+
+        return check
+
 
 
