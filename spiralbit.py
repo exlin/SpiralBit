@@ -23,23 +23,32 @@ class trader (threading.Thread):
         print "Starting " + self.name
         #print_time(self.name, self.counter, 5)
         while self.running == True:
-            if self.app.currentPrice > -1:
-                print "Trading with price " + str(self.app.currentPrice)
-                print "Nonce for my next api call is: " + str(self.app.getNonce())
-                # Polling price information from App().
-                currentPrice = self.app.currentPrice
-                highPrice = self.app.highPrice
-                lowPrice = self.app.lowPrice
-                volume = self.app.volume
-                bidPrice = self.app.bidPrice
-                askPrice = self.app.askPrice
+            # Polling price information from App().
+            currentPrice = self.app.currentPrice
+            highPrice = self.app.highPrice
+            lowPrice = self.app.lowPrice
+            volume = self.app.volume
+            bidPrice = self.app.bidPrice
+            askPrice = self.app.askPrice
+            # Checking if we yet have price data.
+            if currentPrice > -1:
+                #print "Nonce for my next api call is: " + str(self.app.getNonce())
                 
                 decission = trademanager.TradeManager()
+                #react = trademanager.ActionResponse()
                 if self.mode == "buying":
-                    decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
-                
+                    react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+                    if react.action == "buy":
+                        print "Buying bitcoins"
+                    else:
+                        print "Decided to wait"
+            
                 else:
-                    decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+                    if react.action == "sell":
+                        print "Selling bitcoins"
+                    else:
+                        print "Decided not to sell"
     
             else:
                 print "Price not available."
@@ -81,6 +90,11 @@ class App():
         self.api = api
         self.threadLock = threading.Lock()
         self.currentPrice = -1
+        self.highPrice = -1
+        self.lowPrice = -1
+        self.volume = -1
+        self.bidPrice = -1
+        self.askPrice = -1
         self.threads = []
         self.threads.append(monitor(1, "Monitor-1", self))
         self.threads.append(trader(2, "Trader-1", self))
