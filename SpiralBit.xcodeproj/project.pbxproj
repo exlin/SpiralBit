@@ -9,6 +9,7 @@
 /* Begin PBXFileReference section */
 		0D4416BE183FB22F005C547D /* bitstamp.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = bitstamp.py; sourceTree = "<group>"; };
 		0D4416BF183FB22F005C547D /* spiralbit.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = spiralbit.py; sourceTree = "<group>"; };
+		0D6D360E183FCA030079CA4E /* trademanager.py */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.script.python; path = trademanager.py; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXGroup section */
@@ -17,6 +18,7 @@
 			children = (
 				0D4416BE183FB22F005C547D /* bitstamp.py */,
 				0D4416BF183FB22F005C547D /* spiralbit.py */,
+				0D6D360E183FCA030079CA4E /* trademanager.py */,
 			);
 			sourceTree = "<group>";
 		};

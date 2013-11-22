@@ -4,6 +4,7 @@ import time
 import threading
 import ConfigParser
 import bitstamp
+import trademanager
 
 class trader (threading.Thread):
     def __init__(self, threadID, name, app):
