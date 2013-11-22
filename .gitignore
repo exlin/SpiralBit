@@ -1,6 +1,9 @@
 *.py[cod]
 
 .DS_Store
+xcuserdata
+/xcuserdata/
+xcuserdata/
 
 # C extensions
 *.so
