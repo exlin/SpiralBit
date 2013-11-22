@@ -51,5 +51,15 @@ class Bitstamp():
         nonce = nonce + 1
         return transactions
 
-
+    def getOpenOrders(self)
+        openordersUrl = self.baseUrl + "open_orders"
+        parameters = {"key": api_key,
+        "signature": self.sign(),
+        "nonce": nonce}
+        data = urllib.urlencode(parameters)
+        req = url.Request(openordersUrl, data)
+        response = urllib2.urlopen(req)
+        orders = response.read()
+        nonce = nonce + 1
+        return orders
 
