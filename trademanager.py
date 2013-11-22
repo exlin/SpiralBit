@@ -1,5 +1,5 @@
 
-class Trademanager():
+class TradeManager():
     def __init__(self):
         self.mode = 1
     

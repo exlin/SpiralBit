@@ -23,6 +23,7 @@ class trader (threading.Thread):
             if self.app.currentPrice > -1:
                 print "Trading with price " + str(self.app.currentPrice)
                 print "Nonce for my next api call is: " + str(self.app.getNonce())
+                decission = trademanager.TradeManager()
             else:
                 print "Price not available."
             time.sleep(self.pollInterval)
