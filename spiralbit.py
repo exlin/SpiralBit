@@ -21,6 +21,7 @@ class trader (threading.Thread):
         while self.running == True:
             if self.app.currentPrice > -1:
                 print "Trading with price " + str(self.app.currentPrice)
+                print "Nonce for my next api call is: " + str(self.app.getNonce())
             else:
                 print "Price not available."
             time.sleep(self.pollInterval)
@@ -59,6 +60,7 @@ class App():
         self.threads.append(monitor(1, "Monitor-1", self))
         self.threads.append(trader(2, "Trader-1", self))
         self.threads.append(trader(3, "Trader-2", self))
+        self._nonce = time.time()
 
     def start(self):
         for t in self.threads:
@@ -69,6 +71,11 @@ class App():
             t.stop()
         for t in self.threads:
             t.join()
+
+    def getNonce(self):
+        currentNonce = self._nonce
+        self._nonce++
+        return currentNonce
 
 class Config():
     def __init__(self, file):
