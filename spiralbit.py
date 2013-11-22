@@ -64,7 +64,10 @@ class App():
 
     def start(self):
         for t in self.threads:
+            spread = 1;
             t.start()
+            time.sleep(spread)
+            spread = spread + 30
 
     def stop(self):
         for t in self.threads:
