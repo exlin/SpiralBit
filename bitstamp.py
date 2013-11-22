@@ -37,7 +37,7 @@ class Bitstamp():
         return balance
 
     def getTransactions(self, limit=100, offset=0, sort="desc"):
-        transactionsUrl = self.balanceUrl + "user_transactions"
+        transactionsUrl = self.baseUrl + "user_transactions"
         parameters = {"key": api_key,
         "signature": self.sign(),
         "nonce": nonce,
@@ -50,5 +50,6 @@ class Bitstamp():
         transactions = response.read()
         nonce = nonce + 1
         return transactions
+
 
 
