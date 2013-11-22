@@ -63,11 +63,25 @@ class Bitstamp():
         cancelUrl = self.baseUrl + "cancel_order"
         parameters = {"key": api_key,
         "signature": self.sign(nonce),
-        "nonce": nonce
+        "nonce": nonce,
         "id": orderid}
         data = urllib.urlencode(parameters)
         req = url.Request(cancelUrl, data)
         response = urllib2.urlopen(req)
         cancelled = response.read()
         return cancelled
+
+    def buyBitcoins(self, nonce, amount, price):
+        buyUrl = self.baseUrl + "cancel_order"
+        parameters = {"key": api_key,
+        "signature": self.sign(nonce),
+        "nonce": nonce,
+        "amount": amount,
+        "price": price}
+        data = urllib.urlencode(parameters)
+        req = url.Request(buyUrl, data)
+        response = urllib2.urlopen(req)
+        buy = response.read()
+        return buy
+
 
