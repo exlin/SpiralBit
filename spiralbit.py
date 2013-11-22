@@ -67,6 +67,7 @@ class App():
             spread = 1;
             t.start()
             time.sleep(spread)
+            # Creating increasing spread.
             spread = spread + 30
 
     def stop(self):
