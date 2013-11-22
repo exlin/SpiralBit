@@ -59,3 +59,15 @@ class Bitstamp():
         orders = response.read()
         return orders
 
+    def cancelOrder(self, nonce, orderid):
+        cancelUrl = self.baseUrl + "cancel_order"
+        parameters = {"key": api_key,
+        "signature": self.sign(nonce),
+        "nonce": nonce
+        "id": orderid}
+        data = urllib.urlencode(parameters)
+        req = url.Request(cancelUrl, data)
+        response = urllib2.urlopen(req)
+        cancelled = response.read()
+        return cancelled
+
