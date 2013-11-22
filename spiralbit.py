@@ -41,9 +41,9 @@ class trader (threading.Thread):
                     if self.actedPrice == 0:
                         if exchange.balanceCheckUSD(self.app.getNonce(), 0.1, askPrice):
                             # Thread have not yet done single trade, buying first ins.
-                            #exchange.buyBitcoins(self.app.getNonce(), 0.1, askPrice)
-                            #self.actedPrice = askPrice
-                            #self.mode = "selling"
+                            exchange.buyBitcoins(self.app.getNonce(), 0.1, askPrice)
+                            self.actedPrice = askPrice
+                            self.mode = "selling"
                             print "Bought first coins"
                         else:
                             print "Out of dollars"
@@ -129,7 +129,7 @@ class App():
             t.start()
             time.sleep(spread)
             # Creating increasing spread.
-            spread = spread + 30
+            spread = spread + 33
 
     def stop(self):
         for t in self.threads:
