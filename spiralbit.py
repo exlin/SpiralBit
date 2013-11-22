@@ -14,6 +14,9 @@ class trader (threading.Thread):
         self.running = False
         self.app = app
         self.pollInterval = 5
+        self.mode = "buying" #buying=buying bitcoins. selling=selling bitcoins for dollars.
+        self.actedPrice = 0 # What were the price thread last buyed or sold.
+        self.previousPrice = 0 # Previous polled price.
     
     def run(self):
         self.running = True
@@ -23,7 +26,21 @@ class trader (threading.Thread):
             if self.app.currentPrice > -1:
                 print "Trading with price " + str(self.app.currentPrice)
                 print "Nonce for my next api call is: " + str(self.app.getNonce())
+                # Polling price information from App().
+                currentPrice = self.app.currentPrice
+                highPrice = self.app.highPrice
+                lowPrice = self.app.lowPrice
+                volume = self.app.volume
+                bidPrice = self.app.bidPrice
+                askPrice = self.app.askPrice
+                
                 decission = trademanager.TradeManager()
+                if self.mode == "buying":
+                    decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+                
+                else:
+                    decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+    
             else:
                 print "Price not available."
             time.sleep(self.pollInterval)
@@ -50,7 +67,7 @@ class monitor (threading.Thread):
             self.app.currentPrice = pricedata['last']
             self.app.highPrice = pricedata['high']
             self.app.lowPrice = pricedata['low']
-            self.app.volumePrice = pricedata['volume']
+            self.app.volume = pricedata['volume']
             self.app.bidPrice = pricedata['bid']
             self.app.askPrice = pricedata['ask']
             time.sleep(self.pollInterval)
