@@ -60,7 +60,7 @@ class App():
         self.threads.append(monitor(1, "Monitor-1", self))
         self.threads.append(trader(2, "Trader-1", self))
         self.threads.append(trader(3, "Trader-2", self))
-        self._nonce = time.time()
+        self._nonce = int(time.time())
 
     def start(self):
         for t in self.threads:
@@ -74,7 +74,7 @@ class App():
 
     def getNonce(self):
         currentNonce = self._nonce
-        self._nonce++
+        self._nonce += 1
         return currentNonce
 
 class Config():

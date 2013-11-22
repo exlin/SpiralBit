@@ -9,8 +9,7 @@ class Bitstamp():
         self.cid = cid
         self.apiKey = apiKey
         self.apiSecret = apiSecret
-        self.nonce = 1
-
+    
     def pullPrice(self):
         print "Pulling price..."
         url = self.baseUrl + "ticker"
@@ -19,27 +18,26 @@ class Bitstamp():
         response = urllib2.urlopen(req)
         return json.load(response)
 
-    def sign(self):
+    def sign(self, nonce):
         message = self.nonce + self.cid + self.apiKey
         signature = hmac.new(self.apiSecret, msg=message, digestmod=hashlib.sha256).hexdigest().upper()
         return signature
 
-    def getBalance(self):
+    def getBalance(self, nonce):
         balanceUrl = self.baseUrl + "balance"
         parameters = {"key": api_key,
-        "signature": self.sign(),
+        "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
         response = urllib2.urlopen(req)
         balance = response.read()
-        nonce = nonce + 1
         return balance
 
-    def getTransactions(self, limit=100, offset=0, sort="desc"):
+    def getTransactions(self, nonce, limit=100, offset=0, sort="desc"):
         transactionsUrl = self.baseUrl + "user_transactions"
         parameters = {"key": api_key,
-        "signature": self.sign(),
+        "signature": self.sign(nonce),
         "nonce": nonce,
         "offset": offset,
         "limit": limit,
@@ -48,18 +46,16 @@ class Bitstamp():
         req = url.Request(transactionsUrl, data)
         response = urllib2.urlopen(req)
         transactions = response.read()
-        nonce = nonce + 1
         return transactions
 
-    def getOpenOrders(self)
+    def getOpenOrders(self, nonce):
         openordersUrl = self.baseUrl + "open_orders"
         parameters = {"key": api_key,
-        "signature": self.sign(),
+        "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
         req = url.Request(openordersUrl, data)
         response = urllib2.urlopen(req)
         orders = response.read()
-        nonce = nonce + 1
         return orders
 
