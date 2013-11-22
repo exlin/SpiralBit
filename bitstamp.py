@@ -19,7 +19,7 @@ class Bitstamp():
         return json.load(response)
 
     def sign(self, nonce):
-        message = self.nonce + self.cid + self.apiKey
+        message = nonce + self.cid + self.apiKey
         signature = hmac.new(self.apiSecret, msg=message, digestmod=hashlib.sha256).hexdigest().upper()
         return signature
 
