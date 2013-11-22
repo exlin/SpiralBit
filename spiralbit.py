@@ -45,7 +45,13 @@ class monitor (threading.Thread):
         print "Starting " + self.name
         while self.running == True:
             #Get the last price for trading.
-            self.app.currentPrice = self.app.api.pullPrice()['last']
+            pricedata = self.app.api.pullPrice()
+            self.app.currentPrice = pricedata['last']
+            self.app.highPrice = pricedata['high']
+            self.app.lowPrice = pricedata['low']
+            self.app.volumePrice = pricedata['volume']
+            self.app.bidPrice = pricedata['bid']
+            self.app.askPrice = pricedata['ask']
             time.sleep(self.pollInterval)
         print "Exiting " + self.name
 
