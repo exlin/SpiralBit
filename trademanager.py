@@ -10,8 +10,17 @@ class TradeManager():
         self.mode = 1
     
     def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousPrice):
-        print "Thinking..."
         response = ActionResponse()
+        
+        if actedPrice < 1:
+            return response
+        
+        # We may want to buy once rate is going up and that change has been at least y%.
+        previous = previousPrice * 103;
+        current = ask * 100;
+        if previous < current:
+            response.action = "buy"
+            response.price = math.ceil(ask*100)/100
         
         return response
     
