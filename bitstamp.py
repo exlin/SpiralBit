@@ -9,6 +9,7 @@ class Bitstamp():
         self.cid = cid
         self.apiKey = apiKey
         self.apiSecret = apiSecret
+        self.nonce = 1
 
     def pullPrice(self):
         print "Pulling price..."
@@ -18,18 +19,37 @@ class Bitstamp():
         response = urllib2.urlopen(req)
         return json.load(response)
 
-    def sign(self, nonce):
-        message = nonce + self.cid + self.apiKey
+    def sign(self):
+        message = self.nonce + self.cid + self.apiKey
         signature = hmac.new(self.apiSecret, msg=message, digestmod=hashlib.sha256).hexdigest().upper()
         return signature
 
-    def getBalance(self, nonce):
+    def getBalance(self):
         balanceUrl = self.baseUrl + "balance"
         parameters = {"key": api_key,
-        "signature": self.sign(nonce),
+        "signature": self.sign(),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
         response = urllib2.urlopen(req)
         balance = response.read()
+        nonce = nonce + 1
         return balance
+
+    def getTransactions(self, limit=100, offset=0, sort="desc"):
+        transactionsUrl = self.baseUrl + "user_transactions"
+        parameters = {"key": api_key,
+        "signature": self.sign(),
+        "nonce": nonce,
+        "offset": offset,
+        "limit": limit,
+        "sort": sort}
+        data = urllib.urlencode(parameters)
+        req = url.Request(transactionsUrl, data)
+        response = urllib2.urlopen(req)
+        transactions = response.read()
+        nonce = nonce + 1
+        return transactions
+
+
+
