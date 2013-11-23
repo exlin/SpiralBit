@@ -15,12 +15,15 @@ class TradeManager():
         if actedPrice < 1:
             return response
         
-        # We may want to buy once rate is going up and that change has been at least y%.
-        previous = previousPrice * 103;
-        current = ask * 100;
-        if previous < current:
-            response.action = "buy"
-            response.price = math.ceil(ask*100)/100
+        # Check if rate is going up.
+        if previousPrice < currentPrice:
+        
+            # Check that new buy in is 2% lower than the price where we sold previous bitcoins.
+            current = ask * 102;
+            acted = actedPrice * 100
+            if current < acted:
+                response.action = "buy"
+                response.price = math.ceil(ask*100)/100
         
         return response
     
@@ -35,7 +38,7 @@ class TradeManager():
         if previousPrice > currentPrice:
             # Check if we would have potential to make profit if we sell it now.
             currentBid = bid * 100
-            acted = actedPrice * 105 # x100 + 1% bitstamp fee + 4% profit margin gain.
+            acted = actedPrice * 101 # x100 + 1% bitstamp fee + 4% profit margin gain.
             
             if currentBid > acted:
                 response.action = "sell"

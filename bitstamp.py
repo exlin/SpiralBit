@@ -43,7 +43,7 @@ class Bitstamp():
         "limit": limit,
         "sort": sort}
         data = urllib.urlencode(parameters)
-        req = url.Request(transactionsUrl, data)
+        req = urllib2.Request(transactionsUrl, data)
         response = urllib2.urlopen(req)
         transactions = response.read()
         return transactions
@@ -54,7 +54,7 @@ class Bitstamp():
         "signature": self.sign(nonce),
         "nonce": nonce}
         data = urllib.urlencode(parameters)
-        req = url.Request(openordersUrl, data)
+        req = urllib2.Request(openordersUrl, data)
         response = urllib2.urlopen(req)
         orders = response.read()
         return orders
@@ -66,7 +66,7 @@ class Bitstamp():
         "nonce": nonce,
         "id": orderid}
         data = urllib.urlencode(parameters)
-        req = url.Request(cancelUrl, data)
+        req = urllib2.Request(cancelUrl, data)
         response = urllib2.urlopen(req)
         cancelled = response.read()
         return cancelled
@@ -79,7 +79,7 @@ class Bitstamp():
         "amount": amount,
         "price": price}
         data = urllib.urlencode(parameters)
-        req = url.Request(buyUrl, data)
+        req = urllib2.Request(buyUrl, data)
         response = urllib2.urlopen(req)
         buy = response.read()
         return buy
@@ -92,15 +92,20 @@ class Bitstamp():
         "amount": amount,
         "price": price}
         data = urllib.urlencode(parameters)
-        req = url.Request(sellUrl, data)
+        req = urllib2.Request(sellUrl, data)
         response = urllib2.urlopen(req)
         sell = response.read()
         return sell
 
     def balanceCheckUSD(self, nonce, amount, price):
         balance = self.getBalance(nonce)['usd_available']
+        print "Printing"
+        print amount
+        print price
+        
         check = False
-        if balance > amount * price:
+        ask = amount * price
+        if balance > ask:
             check = True
 
         return check

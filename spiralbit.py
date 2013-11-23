@@ -39,9 +39,9 @@ class trader (threading.Thread):
                 
                 if self.mode == "buying":
                     if self.actedPrice == 0:
-                        if exchange.balanceCheckUSD(self.app.getNonce(), 0.1, askPrice):
+                        if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                             # Thread have not yet done single trade, buying first ins.
-                            exchange.buyBitcoins(self.app.getNonce(), 0.1, askPrice)
+                            exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, askPrice)
                             self.actedPrice = askPrice
                             self.mode = "selling"
                             print "Bought first coins"
@@ -50,8 +50,8 @@ class trader (threading.Thread):
                     else:
                         react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
                         if react.action == "buy":
-                            if exchange.balanceCheckUSD(self.app.getNonce(), 0.1, askPrice):
-                                exchange.buyBitcoins(self.app.getNonce(), 0.1, react.price)
+                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
+                                exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
                                 self.actedPrice = react.price
                                 self.mode = "selling"
                                 print "Buyed bitcoins"
@@ -151,6 +151,7 @@ class Config():
         self.api_key = self.ConfigSectionMap(cfgParser, "Authentication")['key']
         self.API_SECRET = self.ConfigSectionMap(cfgParser, "Authentication")['secret']
         self.apiUrl = "https://www.bitstamp.net/api/"
+        self.tradeAmount = 0.1
 
     def ConfigSectionMap(self, parser, section):
         dict1 = {}
