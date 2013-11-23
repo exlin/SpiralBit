@@ -23,7 +23,7 @@ class TradeManager():
             acted = actedPrice * 100
             if current < acted:
                 response.action = "buy"
-                response.price = math.ceil(ask*100)/100
+                response.price = math.ceil(ask*100)/100+0.1
         
         return response
     
@@ -38,10 +38,10 @@ class TradeManager():
         if previousPrice > currentPrice:
             # Check if we would have potential to make profit if we sell it now.
             currentBid = bid * 100
-            acted = actedPrice * 101 # x100 + 1% bitstamp fee + 4% profit margin gain.
+            acted = actedPrice * 105 # x100 + 1% bitstamp fee + 4% profit margin gain.
             
             if currentBid > acted:
                 response.action = "sell"
-                response.price = math.floor(bid*100)/100
+                response.price = math.floor(bid*100)/100-0.1
         
         return response
