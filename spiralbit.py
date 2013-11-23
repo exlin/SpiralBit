@@ -140,8 +140,8 @@ class App():
         self._nonce = int(time.time())
 
     def start(self):
+        spread = 1;
         for t in self.threads:
-            spread = 1;
             t.start()
             time.sleep(spread)
             # Creating increasing spread.
