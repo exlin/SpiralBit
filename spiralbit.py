@@ -56,11 +56,11 @@ class trader (threading.Thread):
                                 self.actedPrice = react.price
                                 self.mode = "selling"
                                 print "Buyed bitcoins"
-                                wait = 0
+                                waited = 0
                             else:
                                 print "Out of dollars"
-                                wait += 1
-                        elif wait > 15:
+                                waited += 1
+                        elif waited > 15:
                             if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                                 exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
                                 self.actedPrice = react.price
@@ -69,7 +69,7 @@ class trader (threading.Thread):
                                 wait = 0
                         else:
                             print "Decided to wait"
-                            wait += 1
+                            waited += 1
                 
                 # We are on Selling mode
                 else:
