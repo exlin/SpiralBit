@@ -12,7 +12,6 @@ class Bitstamp():
         self.apiSecret = apiSecret
     
     def pullPrice(self):
-        print "Pulling price..."
         url = self.baseUrl + "ticker"
         #data = urllib.urlencode(parameters)
         req = urllib2.Request(url)
