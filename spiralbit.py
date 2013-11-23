@@ -7,16 +7,17 @@ import bitstamp
 import trademanager
 
 class trader (threading.Thread):
-    def __init__(self, threadID, name, app):
+    def __init__(self, threadID, name, app, profit):
         threading.Thread.__init__(self)
         self.threadID = threadID
         self.name = name
         self.running = False
         self.app = app
-        self.pollInterval = 5
+        self.pollInterval = 2
         self.mode = "buying" #buying=buying bitcoins. selling=selling bitcoins for dollars.
         self.actedPrice = 0 # What were the price thread last buyed or sold.
         self.previousPrice = 0 # Previous polled price.
+        self.profit = profit
     
     def run(self):
         self.running = True
@@ -61,27 +62,26 @@ class trader (threading.Thread):
                             else:
                                 print "Out of dollars"
                                 waited += 1
-                        elif waited > 15:
-                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
-                                exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
+                        elif waited > 10:
+                            buyCost = float(askPrice) + float(0.1)
+                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, buyCost):
+                                exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, buyCost)
                                 self.actedPrice = react.price
                                 self.mode = "selling"
                                 print "Buyed bitcoins"
                                 waited = 0
                         else:
-                            print "Decided to wait"
                             waited += 1
                 
                 # We are on Selling mode
                 else:
-                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice, self.profit)
                     if react.action == "sell":
+                        # TODO: Check if we have bitcoins (balance)
                         print "Selling bitcoins"
                         exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
                         self.actedPrice = react.price
                         self.mode = "buying"
-                    else:
-                        print "Decided not to sell"
     
             else:
                 print "Price not available."
@@ -98,7 +98,7 @@ class monitor (threading.Thread):
         self.threadID = threadID
         self.name = name
         self.running = False
-        self.pollInterval = 10
+        self.pollInterval = 7
         self.app = app
     
     def run(self):
@@ -114,6 +114,7 @@ class monitor (threading.Thread):
                 self.app.volume = pricedata['volume']
                 self.app.bidPrice = pricedata['bid']
                 self.app.askPrice = pricedata['ask']
+                print "Price " + str(self.app.currentPrice)
             except:
                 print "Error on fetching price data"
                 pass
@@ -136,8 +137,8 @@ class App():
         self.askPrice = -1
         self.threads = []
         self.threads.append(monitor(1, "Monitor-1", self))
-        self.threads.append(trader(2, "Trader-1", self))
-        self.threads.append(trader(3, "Trader-2", self))
+        self.threads.append(trader(2, "Trader-1", self, 0))
+        self.threads.append(trader(3, "Trader-2", self, 1))
         self._nonce = int(time.time())
 
     def start(self):
