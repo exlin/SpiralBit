@@ -99,12 +99,9 @@ class Bitstamp():
 
     def balanceCheckUSD(self, nonce, amount, price):
         balance = self.getBalance(nonce)['usd_available']
-        print "Printing"
-        print amount
-        print price
         
         check = False
-        ask = amount * price
+        ask = float(amount) * float(price)
         if balance > ask:
             check = True
 
