@@ -11,37 +11,36 @@ class TradeManager():
     
     def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousPrice):
         response = ActionResponse()
-        
-        if actedPrice < 1:
-            return response
-        
+                
         # Check if rate is going up.
         if previousPrice < currentPrice:
         
             # Check that new buy in is 2% lower than the price where we sold previous bitcoins.
-            current = ask * 102;
-            acted = actedPrice * 100
+            current = float(ask) * float(102);
+            acted = float(actedPrice) * float(100)
             if current < acted:
                 response.action = "buy"
-                response.price = math.ceil(ask*100)/100+0.1
+                response.price = float(ask) + float(0.1)
+                print "Purcase made because it made sence"
         
         return response
     
 
-    def decideSell(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousPrice):
+    def decideSell(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousPrice, profit):
         response = ActionResponse()
-        
-        if actedPrice < 1:
-            return response
         
         # We think selling once we have just gone past the peak.
         if previousPrice > currentPrice:
             # Check if we would have potential to make profit if we sell it now.
-            currentBid = bid * 100
-            acted = actedPrice * 105 # x100 + 1% bitstamp fee + 4% profit margin gain.
+            currentBid = float(bid) * float(100.00)
+            aim = 101 + profit
+            acted = float(actedPrice) * float(aim)
             
             if currentBid > acted:
                 response.action = "sell"
-                response.price = math.floor(bid*100)/100-0.1
-        
+                response.price = float(bid) - float(0.01)
+            else:
+                print "Bid is not higher than acted price " + str(acted)
+                print "Aim is " + str(aim)
+    
         return response
