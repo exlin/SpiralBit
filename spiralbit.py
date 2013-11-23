@@ -22,6 +22,7 @@ class trader (threading.Thread):
         self.running = True
         print "Starting " + self.name
         #print_time(self.name, self.counter, 5)
+        waited = 0
         while self.running == True:
             # Polling price information from
             currentPrice = self.app.currentPrice
@@ -30,7 +31,7 @@ class trader (threading.Thread):
             volume = self.app.volume
             bidPrice = self.app.bidPrice
             askPrice = self.app.askPrice
-            waited = 0
+            
             # Checking if we yet have price data.
             if currentPrice > -1:
                 #print "Nonce for my next api call is: " + str(self.app.getNonce())
@@ -66,7 +67,7 @@ class trader (threading.Thread):
                                 self.actedPrice = react.price
                                 self.mode = "selling"
                                 print "Buyed bitcoins"
-                                wait = 0
+                                waited = 0
                         else:
                             print "Decided to wait"
                             waited += 1
