@@ -30,6 +30,7 @@ class trader (threading.Thread):
             volume = self.app.volume
             bidPrice = self.app.bidPrice
             askPrice = self.app.askPrice
+            waited = 0
             # Checking if we yet have price data.
             if currentPrice > -1:
                 #print "Nonce for my next api call is: " + str(self.app.getNonce())
@@ -55,10 +56,20 @@ class trader (threading.Thread):
                                 self.actedPrice = react.price
                                 self.mode = "selling"
                                 print "Buyed bitcoins"
+                                wait = 0
                             else:
                                 print "Out of dollars"
+                                wait += 1
+                        elif wait > 15:
+                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
+                                exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
+                                self.actedPrice = react.price
+                                self.mode = "selling"
+                                print "Buyed bitcoins"
+                                wait = 0
                         else:
                             print "Decided to wait"
+                            wait += 1
                 
                 # We are on Selling mode
                 else:
