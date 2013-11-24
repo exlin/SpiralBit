@@ -20,7 +20,7 @@ class TradeManager():
             acted = float(actedPrice) * float(100)
             if current < acted:
                 response.action = "buy"
-                response.price = float(ask) + float(0.1)
+                response.price = float(ask) + float(0.01)
                 print "Purcase made because it made sence"
         
         return response
