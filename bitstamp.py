@@ -80,7 +80,7 @@ class Bitstamp():
         data = urllib.urlencode(parameters)
         req = urllib2.Request(buyUrl, data)
         response = urllib2.urlopen(req)
-        buy = response.read()
+        buy = json.load(response)
         return buy
 
     def sellBitcoins(self, nonce, amount, price):
@@ -93,7 +93,7 @@ class Bitstamp():
         data = urllib.urlencode(parameters)
         req = urllib2.Request(sellUrl, data)
         response = urllib2.urlopen(req)
-        sell = response.read()
+        sell = json.load(response)
         return sell
 
     def balanceCheckUSD(self, nonce, amount, price):
