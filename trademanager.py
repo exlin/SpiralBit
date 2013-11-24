@@ -39,8 +39,5 @@ class TradeManager():
             if currentBid > acted:
                 response.action = "sell"
                 response.price = float(bid) - float(0.01)
-            else:
-                print "Bid is not higher than acted price " + str(acted)
-                print "Aim is " + str(aim)
     
         return response
