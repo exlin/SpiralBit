@@ -17,6 +17,8 @@ class trader (threading.Thread):
         self.mode = "buying" #buying=buying bitcoins. selling=selling bitcoins for dollars.
         self.actedPrice = 0 # What were the price thread last buyed or sold.
         self.previousPrice = 0 # Previous polled price.
+        self.previousBid = 0
+        self.previousAsk = 0
         self.profit = profit
     
     def run(self):
@@ -51,7 +53,7 @@ class trader (threading.Thread):
                         else:
                             print "Out of dollars"
                     else:
-                        react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice)
+                        react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousAsk)
                         if react.action == "buy":
                             if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                                 exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
@@ -75,7 +77,7 @@ class trader (threading.Thread):
                 
                 # We are on Selling mode
                 else:
-                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousPrice, self.profit)
+                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousBid, self.profit)
                     if react.action == "sell":
                         # TODO: Check if we have bitcoins (balance)
                         print "Selling bitcoins"
@@ -87,6 +89,8 @@ class trader (threading.Thread):
                 print "Price not available."
             time.sleep(self.pollInterval)
             self.previousPrice = currentPrice
+            self.previousBid = bidPrice
+            self.previousAsk = askPrice
         print "Exiting " + self.name
 
     def stop(self):
@@ -114,7 +118,7 @@ class monitor (threading.Thread):
                 self.app.volume = pricedata['volume']
                 self.app.bidPrice = pricedata['bid']
                 self.app.askPrice = pricedata['ask']
-                print "Price " + str(self.app.currentPrice)
+                #print "Price " + str(self.app.currentPrice)
             except:
                 print "Error on fetching price data"
                 pass

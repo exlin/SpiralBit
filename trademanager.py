@@ -9,11 +9,11 @@ class TradeManager():
     def __init__(self):
         self.mode = 1
     
-    def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousPrice):
+    def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousAsk):
         response = ActionResponse()
                 
         # Check if rate is going up.
-        if previousPrice < currentPrice:
+        if previousAsk < ask:
         
             # Check that new buy in is 2% lower than the price where we sold previous bitcoins.
             current = float(ask) * float(102);
@@ -26,11 +26,11 @@ class TradeManager():
         return response
     
 
-    def decideSell(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousPrice, profit):
+    def decideSell(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousBid, profit):
         response = ActionResponse()
         
         # We think selling once we have just gone past the peak.
-        if previousPrice > currentPrice:
+        if previousBid > bid:
             # Check if we would have potential to make profit if we sell it now.
             currentBid = float(bid) * float(100.00)
             aim = 101 + profit
