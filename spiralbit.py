@@ -60,20 +60,19 @@ class trader (threading.Thread):
                             if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                                 purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
                                 if purchase["id"] > 0:
-                                    self.actedPrice = react.price
+                                    self.actedPrice = float(react.price)
                                     self.mode = "selling"
                                     purchase = None
-                                    print "Buyed bitcoins"
+                                    print "Decided to buy bitcoins"
                                 waited = 0
                             else:
                                 print "Out of dollars"
                                 waited += 1
-                        elif waited > 60/self.pollInterval:
-                            buyCost = float(askPrice) + float(0.1)
-                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, buyCost):
-                                purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, buyCost)
+                        elif waited > 60:
+                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
+                                purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, askPrice)
                                 if purchase["id"] > 0:
-                                    self.actedPrice = react.price
+                                    self.actedPrice = askPrice
                                     self.mode = "selling"
                                     purchase = None
                                     print "Buyed bitcoins"
@@ -89,7 +88,7 @@ class trader (threading.Thread):
                         print "Selling bitcoins"
                         purchase = exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
                         if purchase["id"] > 0:
-                            self.actedPrice = react.price
+                            self.actedPrice = float(react.price)
                             self.mode = "buying"
                             purchase = None
                             print "Sold bitcoins"
