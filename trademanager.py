@@ -11,6 +11,13 @@ class TradeManager():
     
     def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousAsk):
         response = ActionResponse()
+        
+        if actedPrice < 20.25:
+            print "Price error, actedprice" + str(actedprice)
+        
+        ask = float(ask)
+        actedPrice = float(actedPrice)
+        previousAsk = float(previousAsk)
                 
         # Check if rate is going up.
         if previousAsk < ask:
@@ -28,6 +35,13 @@ class TradeManager():
 
     def decideSell(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousBid, profit):
         response = ActionResponse()
+        if actedPrice < 20.25:
+            print "Price error, actedprice " + str(actedPrice)
+            return response
+        
+        bid = float(bid)
+        actedPrice = float(actedPrice)
+        previousBid = float(previousBid)
         
         # We think selling once we have just gone past the peak.
         if previousBid > bid:
@@ -39,5 +53,7 @@ class TradeManager():
             if currentBid > acted:
                 response.action = "sell"
                 response.price = float(bid) - float(0.01)
+                profit = float(response.price)- float(actedPrice)
+                print "Sold with profit " + str(profit)
     
         return response
