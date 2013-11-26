@@ -26,14 +26,19 @@ class trader (threading.Thread):
         print "Starting " + self.name
         #print_time(self.name, self.counter, 5)
         waited = 0
+        holdHigh = 0
         while self.running == True:
             # Polling price information from
             currentPrice = self.app.currentPrice
             highPrice = self.app.highPrice
             lowPrice = self.app.lowPrice
             volume = self.app.volume
-            bidPrice = self.app.bidPrice
-            askPrice = self.app.askPrice
+            bidPrice = float(self.app.bidPrice)
+            askPrice = float(self.app.askPrice)
+            
+            #We want to record peak price of the time
+            if bidPrice > holdHigh:
+                holdHigh = bidPrice
             
             # Checking if we yet have price data.
             if currentPrice > -1:
@@ -51,6 +56,7 @@ class trader (threading.Thread):
                                 self.actedPrice = askPrice
                                 self.mode = "selling"
                                 purchase = None
+                                holdHigh = 0
                                 print "Bought first coins"
                         else:
                             print "Out of dollars"
@@ -63,18 +69,20 @@ class trader (threading.Thread):
                                     self.actedPrice = float(react.price)
                                     self.mode = "selling"
                                     purchase = None
+                                    holdHigh = 0
                                     print "Decided to buy bitcoins"
                                 waited = 0
                             else:
                                 print "Out of dollars"
                                 waited += 1
-                        elif waited > 60:
+                        elif waited > 160:
                             if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                                 purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, askPrice)
                                 if purchase["id"] > 0:
                                     self.actedPrice = askPrice
                                     self.mode = "selling"
                                     purchase = None
+                                    holdHigh = 0
                                     print "Buyed bitcoins"
                                 waited = 0
                         else:
@@ -82,7 +90,7 @@ class trader (threading.Thread):
                 
                 # We are on Selling mode
                 else:
-                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousBid, self.profit)
+                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousBid, self.profit, holdHigh)
                     if react.action == "sell":
                         # TODO: Check if we have bitcoins (balance)
                         print "Selling bitcoins"
@@ -91,6 +99,7 @@ class trader (threading.Thread):
                             self.actedPrice = float(react.price)
                             self.mode = "buying"
                             purchase = None
+                            holdHigh = 0
                             print "Sold bitcoins"
     
             else:
