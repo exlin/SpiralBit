@@ -17,10 +17,10 @@ class TradeManager():
         
         ask = float(ask)
         actedPrice = float(actedPrice)
-        previousAsk = float(previousAsk)
+        previousAsk = float(previousAsk) + 3
                 
         # Check if rate is going up or if we can secure coins $23 cheaper than we sold them.
-        if previousAsk < ask or ask+23 < actedPrice:
+        if previousAsk < ask: # or ask+23 < actedPrice:
         
             # Check that new buy in is 2% lower than the price where we sold previous bitcoins.
             current = float(ask) * 1.01
