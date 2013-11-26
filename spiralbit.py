@@ -27,6 +27,7 @@ class trader (threading.Thread):
         #print_time(self.name, self.counter, 5)
         waited = 0
         holdHigh = 0
+        holdLow = 0
         while self.running == True:
             # Polling price information from
             currentPrice = self.app.currentPrice
@@ -39,6 +40,9 @@ class trader (threading.Thread):
             #We want to record peak price of the time
             if bidPrice > holdHigh:
                 holdHigh = bidPrice
+            
+            if holdLow > askPrice or holdLow == 0:
+                holdLow = askPrice
             
             # Checking if we yet have price data.
             if currentPrice > -1:
@@ -57,11 +61,12 @@ class trader (threading.Thread):
                                 self.mode = "selling"
                                 purchase = None
                                 holdHigh = 0
+                                holdLow = 0
                                 print "Bought first coins"
                         else:
                             print "Out of dollars"
                     else:
-                        react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousAsk)
+                        react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousAsk, holdLow)
                         if react.action == "buy":
                             if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                                 purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
@@ -70,6 +75,7 @@ class trader (threading.Thread):
                                     self.mode = "selling"
                                     purchase = None
                                     holdHigh = 0
+                                    holdLow = 0
                                     print "Decided to buy bitcoins"
                                 waited = 0
                             else:
@@ -83,6 +89,7 @@ class trader (threading.Thread):
                                     self.mode = "selling"
                                     purchase = None
                                     holdHigh = 0
+                                    holdLow = 0
                                     print "Buyed bitcoins"
                                 waited = 0
                         else:
@@ -100,6 +107,7 @@ class trader (threading.Thread):
                             self.mode = "buying"
                             purchase = None
                             holdHigh = 0
+                            holdLow = 0
                             print "Sold bitcoins"
     
             else:

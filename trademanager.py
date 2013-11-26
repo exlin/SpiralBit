@@ -9,18 +9,22 @@ class TradeManager():
     def __init__(self):
         self.mode = 1
     
-    def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousAsk):
+    def decideBuy(self, currentPrice, highPrice, lowPrice, volume, bid, ask, actedPrice, previousAsk, holdLow):
         response = ActionResponse()
         
         if actedPrice < 20.25:
             print "Price error, actedprice" + str(actedprice)
         
+        if holdLow < 2:
+            return response
+        
         ask = float(ask)
+        holdLow = float(holdLow)
         actedPrice = float(actedPrice)
         previousAsk = float(previousAsk) + 3
                 
-        # Check if rate is going up or if we can secure coins $23 cheaper than we sold them.
-        if previousAsk < ask: # or ask+23 < actedPrice:
+        # Check if rate is going up.
+        if holdLow+1 < ask:
         
             # Check that new buy in is 2% lower than the price where we sold previous bitcoins.
             current = float(ask) * 1.01
