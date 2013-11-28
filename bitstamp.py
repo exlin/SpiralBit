@@ -17,7 +17,7 @@ class Bitstamp():
         url = self.baseUrl + "ticker"
         #data = urllib.urlencode(parameters)
         req = urllib2.Request(url)
-        req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Accept-encoding', 'gzip,deflate')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Enconding') == 'gzip':
             buf = StringIO(response.read())
@@ -39,7 +39,7 @@ class Bitstamp():
         "nonce": nonce}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
-        req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Accept-encoding', 'gzip,deflate')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Enconding') == 'gzip':
             buf = StringIO(response.read())
@@ -95,7 +95,7 @@ class Bitstamp():
         "price": price}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(buyUrl, data)
-        req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Accept-encoding', 'gzip,deflate')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Enconding') == 'gzip':
             buf = StringIO(response.read())
@@ -114,7 +114,7 @@ class Bitstamp():
         "price": price}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(sellUrl, data)
-        req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Accept-encoding', 'gzip,deflate')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Enconding') == 'gzip':
             buf = StringIO(response.read())
