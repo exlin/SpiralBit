@@ -104,14 +104,16 @@ class trader (threading.Thread):
                         if react.action == "sell":
                             # TODO: Check if we have bitcoins (balance)
                             print "Selling bitcoins"
-                            purchase = exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
-                            if purchase["id"] > 0:
-                                self.actedPrice = float(react.price)
-                                self.mode = "buying"
-                                purchase = None
-                                holdHigh = 0
-                                holdLow = 0
-                                print "Sold bitcoins"
+                            btcBalance = float(exchange.getBalance(self.app.getNonce())['btc_available'])
+                            if btcBalance > 0.1:
+                                purchase = exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
+                                if purchase["id"] > 0:
+                                    self.actedPrice = float(react.price)
+                                    self.mode = "buying"
+                                    purchase = None
+                                    holdHigh = 0
+                                    holdLow = 0
+                                    print "Sold bitcoins"
     
             else:
                 print "Price not available."
