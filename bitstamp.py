@@ -4,6 +4,7 @@ import hmac
 import json
 import hashlib
 import gzip
+import zlib
 from StringIO import StringIO
 
 class Bitstamp():
@@ -17,15 +18,16 @@ class Bitstamp():
         url = self.baseUrl + "ticker"
         #data = urllib.urlencode(parameters)
         req = urllib2.Request(url)
-        req.add_header('Accept-encoding', 'gzip,deflate')
+        req.add_header('Accept-Encoding', 'gzip')
         response = urllib2.urlopen(req)
-        if response.info().get('Content-Enconding') == 'gzip':
-            buf = StringIO(response.read())
+        if response.info().get('Content-Encoding') == 'gzip':
+            buf = StringIO( response.read())
             f = gzip.GzipFile(fileobj=buf)
             data = f.read()
+            json_object = json.load(data)
         else:
-            data = response
-        return json.load(data)
+            json_object = json.load(response)
+        return json_object
 
     def sign(self, nonce):
         message = str(nonce) + self.cid + self.apiKey
@@ -39,15 +41,16 @@ class Bitstamp():
         "nonce": nonce}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
-        req.add_header('Accept-encoding', 'gzip,deflate')
+        req.add_header('Accept-encoding', 'gzip')
         response = urllib2.urlopen(req)
-        if response.info().get('Content-Enconding') == 'gzip':
-            buf = StringIO(response.read())
+        if response.info().get('Content-Encoding') == 'gzip':
+            buf = StringIO( response.read())
             f = gzip.GzipFile(fileobj=buf)
             data = f.read()
+            json_object = json.load(data)
         else:
-            data = response
-        return json.load(data)
+            json_object = json.load(response)
+        return json_object
 
     def getTransactions(self, nonce, limit=100, offset=0, sort="desc"):
         transactionsUrl = self.baseUrl + "user_transactions"
@@ -95,15 +98,16 @@ class Bitstamp():
         "price": price}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(buyUrl, data)
-        req.add_header('Accept-encoding', 'gzip,deflate')
+        req.add_header('Accept-encoding', 'gzip')
         response = urllib2.urlopen(req)
-        if response.info().get('Content-Enconding') == 'gzip':
-            buf = StringIO(response.read())
+        if response.info().get('Content-Encoding') == 'gzip':
+            buf = StringIO( response.read())
             f = gzip.GzipFile(fileobj=buf)
             data = f.read()
+            json_object = json.load(data)
         else:
-            data = response
-        return data
+            json_object = json.load(response)
+        return json_object
 
     def sellBitcoins(self, nonce, amount, price):
         sellUrl = self.baseUrl + "sell"
@@ -114,15 +118,17 @@ class Bitstamp():
         "price": price}
         data = urllib.urlencode(parameters)
         req = urllib2.Request(sellUrl, data)
-        req.add_header('Accept-encoding', 'gzip,deflate')
+        req.add_header('Accept-encoding', 'gzip')
         response = urllib2.urlopen(req)
-        if response.info().get('Content-Enconding') == 'gzip':
-            buf = StringIO(response.read())
+        if response.info().get('Content-Encoding') == 'gzip':
+            buf = StringIO( response.read())
             f = gzip.GzipFile(fileobj=buf)
             data = f.read()
+            json_object = json.load(data)
         else:
-            data = response
-        return data
+            json_object = json.load(response)
+        return json_object
+
 
     def balanceCheckUSD(self, nonce, amount, price):
         balance = self.getBalance(nonce)['usd_available']

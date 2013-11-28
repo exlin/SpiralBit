@@ -145,7 +145,7 @@ class monitor (threading.Thread):
                 self.app.currentPrice = float(pricedata['last'])
                 self.app.highPrice = float(pricedata['high'])
                 self.app.lowPrice = float(pricedata['low'])
-                self.app.volume = int(pricedata['volume'])
+                self.app.volume = float(pricedata['volume'])
                 self.app.bidPrice = float(pricedata['bid'])
                 self.app.askPrice = float(pricedata['ask'])
                 self.app.timestamp = pricedata['timestamp']
