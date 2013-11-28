@@ -5,6 +5,8 @@ import threading
 import ConfigParser
 import bitstamp
 import trademanager
+import trend
+import math
 
 class trader (threading.Thread):
     def __init__(self, threadID, name, app, profit):
@@ -97,18 +99,19 @@ class trader (threading.Thread):
                 
                 # We are on Selling mode
                 else:
-                    react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousBid, self.profit, holdHigh)
-                    if react.action == "sell":
-                        # TODO: Check if we have bitcoins (balance)
-                        print "Selling bitcoins"
-                        purchase = exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
-                        if purchase["id"] > 0:
-                            self.actedPrice = float(react.price)
-                            self.mode = "buying"
-                            purchase = None
-                            holdHigh = 0
-                            holdLow = 0
-                            print "Sold bitcoins"
+                    if self.app.safetySwitch == False:
+                        react = decission.decideSell(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousBid, self.profit, holdHigh)
+                        if react.action == "sell":
+                            # TODO: Check if we have bitcoins (balance)
+                            print "Selling bitcoins"
+                            purchase = exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
+                            if purchase["id"] > 0:
+                                self.actedPrice = float(react.price)
+                                self.mode = "buying"
+                                purchase = None
+                                holdHigh = 0
+                                holdLow = 0
+                                print "Sold bitcoins"
     
             else:
                 print "Price not available."
@@ -143,6 +146,7 @@ class monitor (threading.Thread):
                 self.app.volume = pricedata['volume']
                 self.app.bidPrice = pricedata['bid']
                 self.app.askPrice = pricedata['ask']
+                self.app.timestamp = pricedata['timestamp']
                 #print "Price " + str(self.app.currentPrice)
             except:
                 print "Error on fetching price data"
@@ -151,6 +155,114 @@ class monitor (threading.Thread):
             time.sleep(self.pollInterval)
         print "Exiting " + self.name
 
+    def stop(self):
+        self.running = False
+
+class trendTrader (threading.Thread):
+    def __init__(self, threadID, name, app):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.running = False
+        self.pollInterval = 7
+        self.app = app
+    
+    def run(self):
+        self.running = True
+        exchange = self.app.api
+        
+        print "Starting " + self.name
+        while self.running == True:
+            #Get the last price for trading.
+            bidPrice = float(self.app.bidPrice)
+            askPrice = float(self.app.askPrice)
+            trendBuy = float(self.app.trendBuy)
+            trendSell = float(self.app.trendSell)
+            sellTrigger = trendSell * 1.02
+            
+            if trendSell > 25 or trendBuy > 25:
+            
+                # Sell coins
+                if bidPrice > trendSell:
+                    balance = exchange.getBalance(self.app.getNonce())
+                    usdBalance = float(balance['usd_available'])
+                    btcBalance = float(balance['btc_available'])
+                
+                    if usdBalance < 50 or bidPrice > sellTrigger:
+                        if btcBalance > 0.1:
+                            purchase = exchange.sellBitcoins(self.app.getNonce(), 0.05, bidPrice)
+                            if purchase["id"] > 0:
+                                print "TrendSold bitcoins"
+                        elif btcBalance > 0.02:
+                            purchase = exchange.sellBitcoins(self.app.getNonce(), 0.02, bidPrice)
+                            if purchase["id"] > 0:
+                                print "TrendSold bitcoins"
+        
+            
+                if askPrice < trendBuy:
+                    if exchange.balanceCheckUSD(self.app.getNonce(), 0.02, askPrice):
+                        purchase = exchange.buyBitcoins(self.app.getNonce(), 0.02, askPrice)
+                        if purchase["id"] > 0:
+                            print "TrendPurchased bitcoins"
+
+
+            time.sleep(self.pollInterval)
+        print "Exiting " + self.name
+    
+    def stop(self):
+        self.running = False
+
+class trendmonitor (threading.Thread):
+    def __init__(self, threadID, name, app):
+        threading.Thread.__init__(self)
+        self.threadID = threadID
+        self.name = name
+        self.running = False
+        self.pollInterval = 15
+        self.app = app
+    
+    def run(self):
+        self.running = True
+        print "Starting " + self.name
+        while self.running == True:
+            currentPrice = self.app.currentPrice
+            highPrice = self.app.highPrice #24h
+            lowPrice = self.app.lowPrice #24h
+            volume = self.app.volume #24h
+            timestamp = self.app.timestamp
+            
+            if currentPrice > 0:
+                self.app.stat.insert(0, float(currentPrice))
+            
+                statLength = len(self.app.stat)
+                if statLength > 90:
+                    self.app.stat.pop()
+                    statLength = statLength-2
+                    halfLength = int(math.floor(statLength/2))
+                    data = self.app.stat
+                    
+                    k1 = (float(self.app.stat[statLength])-float(self.app.stat[0]))/statLength
+                    k2 = (float(self.app.stat[statLength])-float(self.app.stat[halfLength]))/(statLength-(halfLength))
+        
+                    y1 = k1*(statLength+1)+self.app.stat[0]
+                    y2 = k2*(halfLength+1)+self.app.stat[halfLength]
+                    
+                    if k2 > 0.9:
+                        self.app.safetySwitch = True
+                    else:
+                        self.app.safetySwitch = False
+                    
+                    if y2 > y1:
+                        self.app.trendSell = float(y2) * 1.03
+                        self.app.trendBuy = float(y1) * 0.98
+                    else:
+                        self.app.trendSell = float(y1) * 1.03
+                        self.app.trendBuy = float(y2) * 0.98
+        
+            
+            time.sleep(self.pollInterval)
+        print "Exiting " + self.name
+    
     def stop(self):
         self.running = False
 
@@ -164,11 +276,19 @@ class App():
         self.volume = -1
         self.bidPrice = -1
         self.askPrice = -1
+        self.timestamp = "0"
+        self.stat = [] # list of price history.
+        self.trend = 0;
         self.threads = []
+        self.safetySwitch = True
+        self.trendBuy = -1
+        self.trendSell = -1
         self.threads.append(monitor(1, "Monitor-1", self))
-        self.threads.append(trader(2, "Trader-1", self, 0))
-        self.threads.append(trader(3, "Trader-2", self, 1))
-        self.threads.append(trader(4, "Trader-3", self, 2))
+        self.threads.append(trendmonitor(2, "Trend", self))
+        self.threads.append(trendTrader(3, "TrendTrader", self))
+        self.threads.append(trader(4, "Trader-1", self, 0))
+        self.threads.append(trader(5, "Trader-2", self, 1))
+        self.threads.append(trader(6, "Trader-3", self, 2))
         self._nonce = int(time.time())
 
     def start(self):
@@ -177,7 +297,7 @@ class App():
             t.start()
             time.sleep(spread)
             # Creating increasing spread.
-            spread = spread + 33
+            spread = spread + 45
 
     def stop(self):
         for t in self.threads:
@@ -198,8 +318,8 @@ class Config():
         self.cid = self.ConfigSectionMap(cfgParser, "Authentication")['cid']
         self.api_key = self.ConfigSectionMap(cfgParser, "Authentication")['key']
         self.API_SECRET = self.ConfigSectionMap(cfgParser, "Authentication")['secret']
-        self.apiUrl = "https://www.bitstamp.net/api/"
-        self.tradeAmount = 0.1
+        self.apiUrl = "http://62.106.5.203:3000/"
+        self.tradeAmount = 0.05
 
     def ConfigSectionMap(self, parser, section):
         dict1 = {}
