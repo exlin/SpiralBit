@@ -142,12 +142,12 @@ class monitor (threading.Thread):
             #Get the last price for trading.
             try:
                 pricedata = self.app.api.pullPrice()
-                self.app.currentPrice = pricedata['last']
-                self.app.highPrice = pricedata['high']
-                self.app.lowPrice = pricedata['low']
-                self.app.volume = pricedata['volume']
-                self.app.bidPrice = pricedata['bid']
-                self.app.askPrice = pricedata['ask']
+                self.app.currentPrice = float(pricedata['last'])
+                self.app.highPrice = float(pricedata['high'])
+                self.app.lowPrice = float(pricedata['low'])
+                self.app.volume = int(pricedata['volume'])
+                self.app.bidPrice = float(pricedata['bid'])
+                self.app.askPrice = float(pricedata['ask'])
                 self.app.timestamp = pricedata['timestamp']
                 #print "Price " + str(self.app.currentPrice)
             except:
