@@ -36,9 +36,10 @@ class Bitstamp():
 
     def getBalance(self, nonce):
         balanceUrl = self.baseUrl + "balance"
-        parameters = {"key": self.apiKey,
-        "signature": self.sign(nonce),
-        "nonce": nonce}
+        parameters = [('key', self.apiKey),
+             ('signature', self.sign(nonce)),
+             ('nonce', nonce),
+             ]
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
         req.add_header('Accept-encoding', 'gzip')
@@ -91,11 +92,12 @@ class Bitstamp():
 
     def buyBitcoins(self, nonce, amount, price):
         buyUrl = self.baseUrl + "buy"
-        parameters = {"key": self.apiKey,
-        "signature": self.sign(nonce),
-        "nonce": nonce,
-        "amount": amount,
-        "price": price}
+        parameters = [('key', self.apiKey),
+                      ('signature', self.sign(nonce)),
+                      ('nonce', nonce),
+                      ('amount', amount),
+                      ('price', price),
+                      ]
         data = urllib.urlencode(parameters)
         req = urllib2.Request(buyUrl, data)
         req.add_header('Accept-encoding', 'gzip')
@@ -111,11 +113,12 @@ class Bitstamp():
 
     def sellBitcoins(self, nonce, amount, price):
         sellUrl = self.baseUrl + "sell"
-        parameters = {"key": self.apiKey,
-        "signature": self.sign(nonce),
-        "nonce": nonce,
-        "amount": amount,
-        "price": price}
+        parameters = [('key', self.apiKey),
+                      ('signature', self.sign(nonce)),
+                      ('nonce', nonce),
+                      ('amount', amount),
+                      ('price', price),
+                      ]
         data = urllib.urlencode(parameters)
         req = urllib2.Request(sellUrl, data)
         req.add_header('Accept-encoding', 'gzip')
