@@ -42,7 +42,8 @@ class Bitstamp():
              ]
         data = urllib.urlencode(parameters)
         req = urllib2.Request(balanceUrl, data)
-        req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Accept-Encoding', 'gzip')
+        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Encoding') == 'gzip':
             buf = StringIO( response.read())
@@ -101,6 +102,7 @@ class Bitstamp():
         data = urllib.urlencode(parameters)
         req = urllib2.Request(buyUrl, data)
         req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Encoding') == 'gzip':
             buf = StringIO( response.read())
@@ -122,6 +124,7 @@ class Bitstamp():
         data = urllib.urlencode(parameters)
         req = urllib2.Request(sellUrl, data)
         req.add_header('Accept-encoding', 'gzip')
+        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
         response = urllib2.urlopen(req)
         if response.info().get('Content-Encoding') == 'gzip':
             buf = StringIO( response.read())
