@@ -106,7 +106,7 @@ class trader (threading.Thread):
                             print "Selling bitcoins"
                             btcBalance = float(exchange.getBalance(self.app.getNonce())['btc_available'])
                             if btcBalance > 0.1:
-                                purchase = exchange.sellBitcoins(self.app.getNonce(), 0.1, react.price)
+                                purchase = exchange.sellBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
                                 if purchase["id"] > 0:
                                     self.actedPrice = float(react.price)
                                     self.mode = "buying"
