@@ -37,7 +37,7 @@ class Bitstamp():
     def getBalance(self, nonce):
         balanceUrl = self.baseUrl + "balance"
         parameters = {}
-        parameters['key'] = self.key
+        parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
         parameters['nonce'] = nonce
         #parameters = [('key', self.apiKey),
@@ -104,7 +104,7 @@ class Bitstamp():
         #('price', price),
         #]
         parameters = {}
-        parameters['key'] = self.key
+        parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
         parameters['nonce'] = nonce
         parameters['amount'] = amount
@@ -133,7 +133,7 @@ class Bitstamp():
         #('price', price),
         #]
         parameters = {}
-        parameters['key'] = self.key
+        parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
         parameters['nonce'] = nonce
         parameters['amount'] = amount
