@@ -13,6 +13,7 @@ class Bitstamp():
         self.cid = cid
         self.apiKey = apiKey
         self.apiSecret = apiSecret
+        self.proxydict = None
     
     def pullPrice(self):
         url = self.baseUrl + "ticker"
@@ -40,23 +41,15 @@ class Bitstamp():
         parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
         parameters['nonce'] = nonce
-        #parameters = [('key', self.apiKey),
-        #('signature', self.sign(nonce)),
-        #('nonce', nonce),
-        #]
-        data = urllib.urlencode(parameters)
-        req = urllib2.Request(balanceUrl, data)
-        req.add_header('Accept-Encoding', 'gzip')
-        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-        response = urllib2.urlopen(req)
-        if response.info().get('Content-Encoding') == 'gzip':
-            buf = StringIO( response.read())
-            f = gzip.GzipFile(fileobj=buf)
-            data = f.read()
-            json_object = json.load(data)
+        
+        r = requests.post(balanceUrl, data=parameters, proxies=self.proxydict)
+        if r.status_code == 200:
+            if 'error' in r.json():
+                return False, r.json()['error']
+            else:
+                return r.json()
         else:
-            json_object = json.load(response)
-        return json_object
+            r.raise_for_status()
 
     def getTransactions(self, nonce, limit=100, offset=0, sort="desc"):
         transactionsUrl = self.baseUrl + "user_transactions"
@@ -97,12 +90,7 @@ class Bitstamp():
 
     def buyBitcoins(self, nonce, amount, price):
         buyUrl = self.baseUrl + "buy"
-        #parameters = [('key', self.apiKey),
-        #('signature', self.sign(nonce)),
-        #('nonce', nonce),
-        #('amount', amount),
-        #('price', price),
-        #]
+
         parameters = {}
         parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
@@ -110,47 +98,32 @@ class Bitstamp():
         parameters['amount'] = amount
         parameters['price'] = price
         
-        data = urllib.urlencode(parameters)
-        req = urllib2.Request(buyUrl, data)
-        req.add_header('Accept-encoding', 'gzip')
-        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-        response = urllib2.urlopen(req)
-        if response.info().get('Content-Encoding') == 'gzip':
-            buf = StringIO( response.read())
-            f = gzip.GzipFile(fileobj=buf)
-            data = f.read()
-            json_object = json.load(data)
+        r = requests.post(buyUrl, data=parameters, proxies=self.proxydict)
+        if r.status_code == 200:
+            if 'error' in r.json():
+                return False, r.json()['error']
+            else:
+                return r.json()
         else:
-            json_object = json.load(response)
-        return json_object
+            r.raise_for_status()
 
     def sellBitcoins(self, nonce, amount, price):
         sellUrl = self.baseUrl + "sell"
-        #parameters = [('key', self.apiKey),
-        #('signature', self.sign(nonce)),
-        #('nonce', nonce),
-        #('amount', amount),
-        #('price', price),
-        #]
         parameters = {}
         parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
         parameters['nonce'] = nonce
         parameters['amount'] = amount
         parameters['price'] = price
-        data = urllib.urlencode(parameters)
-        req = urllib2.Request(sellUrl, data)
-        req.add_header('Accept-encoding', 'gzip')
-        req.add_header('Content-Type', 'application/x-www-form-urlencoded')
-        response = urllib2.urlopen(req)
-        if response.info().get('Content-Encoding') == 'gzip':
-            buf = StringIO( response.read())
-            f = gzip.GzipFile(fileobj=buf)
-            data = f.read()
-            json_object = json.load(data)
+    
+        r = requests.post(sellUrl, data=params, proxies=self.proxydict)
+        if r.status_code == 200:
+            if 'error' in r.json():
+                return False, r.json()['error']
+            else:
+                return r.json()
         else:
-            json_object = json.load(response)
-        return json_object
+            r.raise_for_status()
 
 
     def balanceCheckUSD(self, nonce, amount, price):
