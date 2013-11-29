@@ -6,6 +6,7 @@ import hashlib
 import gzip
 import zlib
 from StringIO import StringIO
+import requests
 
 class Bitstamp():
     def __init__(self, baseUrl, cid, apiKey, apiSecret):
