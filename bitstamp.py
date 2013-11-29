@@ -48,7 +48,7 @@ class Bitstamp():
             if 'error' in r.json():
                 return False, r.json()['error']
             else:
-                return r.json()
+                return json.load(r.json())
         else:
             r.raise_for_status()
 
@@ -104,7 +104,7 @@ class Bitstamp():
             if 'error' in r.json():
                 return False, r.json()['error']
             else:
-                return r.json()
+                return json.load(r.json())
         else:
             r.raise_for_status()
 
@@ -122,7 +122,7 @@ class Bitstamp():
             if 'error' in r.json():
                 return False, r.json()['error']
             else:
-                return r.json()
+                return json.load(r.json())
         else:
             r.raise_for_status()
 
