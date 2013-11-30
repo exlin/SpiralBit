@@ -119,7 +119,7 @@ class Bitstamp():
         parameters['amount'] = amount
         parameters['price'] = price
     
-        r = requests.post(sellUrl, data=params, proxies=self.proxydict)
+        r = requests.post(sellUrl, data=parameters, proxies=self.proxydict)
         if r.status_code == 200:
             if 'error' in r.json():
                 return False, r.json()['error']
