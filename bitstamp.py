@@ -48,7 +48,8 @@ class Bitstamp():
             if 'error' in r.json():
                 return False, r.json()['error']
             else:
-                return json.load(r.text)
+                balance = dict(r.json())
+                return balance
         else:
             r.raise_for_status()
 
@@ -104,7 +105,8 @@ class Bitstamp():
             if 'error' in r.json():
                 return False, r.json()['error']
             else:
-                return json.load(r.text)
+                buy = dict(r.json())
+                return buy
         else:
             r.raise_for_status()
 
@@ -122,7 +124,8 @@ class Bitstamp():
             if 'error' in r.json():
                 return False, r.json()['error']
             else:
-                return json.load(r.text)
+                sell = dict(r.json())
+                return sell
         else:
             r.raise_for_status()
 
