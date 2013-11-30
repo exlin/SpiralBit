@@ -249,7 +249,7 @@ class trendmonitor (threading.Thread):
                     y1 = k1*(statLength+1)+self.app.stat[0]
                     y2 = k2*(halfLength+1)+self.app.stat[halfLength]
                     
-                    if k2 > 0.9:
+                    if k2 > 0.4:
                         self.app.safetySwitch = True
                     else:
                         self.app.safetySwitch = False
