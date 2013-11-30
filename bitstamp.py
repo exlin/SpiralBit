@@ -17,7 +17,7 @@ class Bitstamp():
         self.proxydict = None
     
     def pullPrice(self):
-        url = self.baseUrl + "ticker"
+        url = self.baseUrl + "ticker/"
         #data = urllib.urlencode(parameters)
         req = urllib2.Request(url)
         req.add_header('Accept-Encoding', 'gzip')
@@ -37,7 +37,7 @@ class Bitstamp():
         return signature
 
     def getBalance(self, nonce):
-        balanceUrl = self.baseUrl + "balance"
+        balanceUrl = self.baseUrl + "balance/"
         parameters = {}
         parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
@@ -68,7 +68,7 @@ class Bitstamp():
         return transactions
 
     def getOpenOrders(self, nonce):
-        openordersUrl = self.baseUrl + "open_orders"
+        openordersUrl = self.baseUrl + "open_orders/"
         parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce}
@@ -79,7 +79,7 @@ class Bitstamp():
         return orders
 
     def cancelOrder(self, nonce, orderid):
-        cancelUrl = self.baseUrl + "cancel_order"
+        cancelUrl = self.baseUrl + "cancel_order/"
         parameters = {"key": self.apiKey,
         "signature": self.sign(nonce),
         "nonce": nonce,
@@ -91,7 +91,7 @@ class Bitstamp():
         return cancelled
 
     def buyBitcoins(self, nonce, amount, price):
-        buyUrl = self.baseUrl + "buy"
+        buyUrl = self.baseUrl + "buy/"
 
         parameters = {}
         parameters['key'] = self.apiKey
@@ -111,7 +111,7 @@ class Bitstamp():
             r.raise_for_status()
 
     def sellBitcoins(self, nonce, amount, price):
-        sellUrl = self.baseUrl + "sell"
+        sellUrl = self.baseUrl + "sell/"
         parameters = {}
         parameters['key'] = self.apiKey
         parameters['signature'] = self.sign(nonce)
