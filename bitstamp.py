@@ -46,7 +46,8 @@ class Bitstamp():
         r = requests.post(balanceUrl, data=parameters, proxies=self.proxydict)
         if r.status_code == 200:
             if 'error' in r.json():
-                return False, r.json()['error']
+                #return False, r.json()['error']
+                return False
             else:
                 balance = dict(r.json())
                 return balance
@@ -103,7 +104,8 @@ class Bitstamp():
         r = requests.post(buyUrl, data=parameters, proxies=self.proxydict)
         if r.status_code == 200:
             if 'error' in r.json():
-                return False, r.json()['error']
+                #return False, r.json()['error']
+                return False
             else:
                 buy = dict(r.json())
                 return buy
@@ -122,7 +124,8 @@ class Bitstamp():
         r = requests.post(sellUrl, data=parameters, proxies=self.proxydict)
         if r.status_code == 200:
             if 'error' in r.json():
-                return False, r.json()['error']
+                #return False, r.json()['error']
+                return False
             else:
                 sell = dict(r.json())
                 return sell
