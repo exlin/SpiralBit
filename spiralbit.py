@@ -70,30 +70,38 @@ class trader (threading.Thread):
                     else:
                         react = decission.decideBuy(currentPrice, highPrice, lowPrice, volume, bidPrice, askPrice, self.actedPrice, self.previousAsk, holdLow)
                         if react.action == "buy":
-                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
-                                purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
-                                if purchase["id"] > 0:
-                                    self.actedPrice = float(react.price)
-                                    self.mode = "selling"
-                                    purchase = None
-                                    holdHigh = 0
-                                    holdLow = 0
-                                    print "Decided to buy bitcoins"
-                                waited = 0
-                            else:
-                                print "Out of dollars"
-                                waited += 1
+                            try:
+                                if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
+                                    purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
+                                    if purchase["id"] > 0:
+                                        self.actedPrice = float(react.price)
+                                        self.mode = "selling"
+                                        purchase = None
+                                        holdHigh = 0
+                                        holdLow = 0
+                                        print "Decided to buy bitcoins"
+                                        waited = 0
+                                else:
+                                    print "Out of dollars"
+                                    waited += 1
+                            except:
+                                pass
+                    
                         elif waited > 160:
-                            if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
-                                purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, askPrice)
-                                if purchase["id"] > 0:
-                                    self.actedPrice = askPrice
-                                    self.mode = "selling"
-                                    purchase = None
-                                    holdHigh = 0
-                                    holdLow = 0
-                                    print "Buyed bitcoins"
-                                waited = 0
+                            try:
+                                if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
+                                    purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, askPrice)
+                                    if purchase["id"] > 0:
+                                        self.actedPrice = askPrice
+                                        self.mode = "selling"
+                                        purchase = None
+                                        holdHigh = 0
+                                        holdLow = 0
+                                        print "Buyed bitcoins"
+                                        waited = 0
+                            except:
+                                pass
+                    
                         else:
                             waited += 1
                 
@@ -104,16 +112,20 @@ class trader (threading.Thread):
                         if react.action == "sell":
                             # TODO: Check if we have bitcoins (balance)
                             print "Selling bitcoins"
-                            btcBalance = float(exchange.getBalance(self.app.getNonce())['btc_available'])
-                            if btcBalance > 0.1:
-                                purchase = exchange.sellBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
-                                if purchase["id"] > 0:
-                                    self.actedPrice = float(react.price)
-                                    self.mode = "buying"
-                                    purchase = None
-                                    holdHigh = 0
-                                    holdLow = 0
-                                    print "Sold bitcoins"
+                            try:
+                                btcBalance = float(exchange.getBalance(self.app.getNonce())['btc_available'])
+                                if btcBalance > 0.1:
+                                    purchase = exchange.sellBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
+                                    if purchase["id"] > 0:
+                                        self.actedPrice = float(react.price)
+                                        self.mode = "buying"
+                                        purchase = None
+                                        holdHigh = 0
+                                        holdLow = 0
+                                        print "Sold bitcoins"
+                            except:
+                                pass
+                            
     
             else:
                 print "Price not available."
@@ -191,21 +203,28 @@ class trendTrader (threading.Thread):
                     btcBalance = float(balance['btc_available'])
                 
                     if usdBalance < 50 or bidPrice > sellTrigger:
-                        if btcBalance > 0.1:
-                            purchase = exchange.sellBitcoins(self.app.getNonce(), 0.05, bidPrice)
-                            if purchase["id"] > 0:
-                                print "TrendSold bitcoins"
-                        elif btcBalance > 0.02:
-                            purchase = exchange.sellBitcoins(self.app.getNonce(), 0.02, bidPrice)
-                            if purchase["id"] > 0:
-                                print "TrendSold bitcoins"
+                        try:
+                            if btcBalance > 0.1:
+                                purchase = exchange.sellBitcoins(self.app.getNonce(), 0.05, bidPrice)
+                                if purchase["id"] > 0:
+                                    print "TrendSold bitcoins"
+                            elif btcBalance > 0.02:
+                                purchase = exchange.sellBitcoins(self.app.getNonce(), 0.02, bidPrice)
+                                if purchase["id"] > 0:
+                                    print "TrendSold bitcoins"
+                        except:
+                            pass
         
             
                 if askPrice < trendBuy:
-                    if exchange.balanceCheckUSD(self.app.getNonce(), 0.02, askPrice):
-                        purchase = exchange.buyBitcoins(self.app.getNonce(), 0.02, askPrice)
-                        if purchase["id"] > 0:
-                            print "TrendPurchased bitcoins"
+                    try:
+                        if exchange.balanceCheckUSD(self.app.getNonce(), 0.02, askPrice):
+                            purchase = exchange.buyBitcoins(self.app.getNonce(), 0.02, askPrice)
+                            if purchase["id"] > 0:
+                                print "TrendPurchased bitcoins"
+                    except:
+                        pass
+    
 
 
             time.sleep(self.pollInterval)
