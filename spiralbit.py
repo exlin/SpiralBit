@@ -340,7 +340,7 @@ class Config():
         self.api_key = self.ConfigSectionMap(cfgParser, "Authentication")['key']
         self.API_SECRET = self.ConfigSectionMap(cfgParser, "Authentication")['secret']
         self.apiUrl = "https://www.bitstamp.net/api/"
-        self.tradeAmount = 0.05
+        self.tradeAmount = 0.1
 
     def ConfigSectionMap(self, parser, section):
         dict1 = {}
