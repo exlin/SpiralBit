@@ -196,26 +196,6 @@ class trendTrader (threading.Thread):
             
             if trendSell > 25 or trendBuy > 25:
             
-                # Sell coins
-                if bidPrice > trendSell:
-                    balance = exchange.getBalance(self.app.getNonce())
-                    usdBalance = float(balance['usd_available'])
-                    btcBalance = float(balance['btc_available'])
-                
-                    if usdBalance < 50 or bidPrice > sellTrigger:
-                        try:
-                            if btcBalance > 0.1:
-                                purchase = exchange.sellBitcoins(self.app.getNonce(), 0.05, bidPrice)
-                                if purchase["id"] > 0:
-                                    print "TrendSold bitcoins"
-                            elif btcBalance > 0.02:
-                                purchase = exchange.sellBitcoins(self.app.getNonce(), 0.02, bidPrice)
-                                if purchase["id"] > 0:
-                                    print "TrendSold bitcoins"
-                        except:
-                            pass
-        
-            
                 if askPrice < trendBuy:
                     try:
                         if exchange.balanceCheckUSD(self.app.getNonce(), 0.02, askPrice):
