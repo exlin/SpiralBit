@@ -15,7 +15,7 @@ class trader (threading.Thread):
         self.name = name
         self.running = False
         self.app = app
-        self.pollInterval = 2
+        self.pollInterval = 7
         self.mode = "buying" #buying=buying bitcoins. selling=selling bitcoins for dollars.
         self.actedPrice = 0 # What were the price thread last buyed or sold.
         self.previousPrice = 0 # Previous polled price.
