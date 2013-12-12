@@ -114,7 +114,7 @@ class trader (threading.Thread):
                             print "Selling bitcoins"
                             try:
                                 btcBalance = float(exchange.getBalance(self.app.getNonce())['btc_available'])
-                                if btcBalance > 0.1:
+                                if btcBalance > cfg.tradeAmount:
                                     purchase = exchange.sellBitcoins(self.app.getNonce(), cfg.tradeAmount, react.price)
                                     if purchase["id"] > 0:
                                         self.actedPrice = float(react.price)
@@ -320,7 +320,7 @@ class Config():
         self.api_key = self.ConfigSectionMap(cfgParser, "Authentication")['key']
         self.API_SECRET = self.ConfigSectionMap(cfgParser, "Authentication")['secret']
         self.apiUrl = "https://www.bitstamp.net/api/"
-        self.tradeAmount = 0.1
+        self.tradeAmount = 0.2
 
     def ConfigSectionMap(self, parser, section):
         dict1 = {}
