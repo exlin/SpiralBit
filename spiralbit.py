@@ -87,7 +87,7 @@ class trader (threading.Thread):
                             except:
                                 pass
                     
-                        elif waited > 160:
+                        elif waited > 30 and actedPrice > askPrice:
                             try:
                                 if exchange.balanceCheckUSD(self.app.getNonce(), cfg.tradeAmount, askPrice):
                                     purchase = exchange.buyBitcoins(self.app.getNonce(), cfg.tradeAmount, askPrice)
